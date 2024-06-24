@@ -128,64 +128,53 @@ class HBNBCommand(cmd.Cmd):
     #     storage.save()
 
     def do_create(self, args):
-        try:
-            if not args:
-                raise SyntaxError()
-            arg_list = args.split(" ")
-            kw = {}
-            for arg in arg_list[1:]:
-                arg_splited = arg.split("=")
-                arg_splited[1] = eval(arg_splited[1])
-                if type(arg_splited[1]) is str:
-                    arg_splited[1] = (
-                        arg_splited[1]
-                        .replace("_", " ")
-                        .replace('"', '\\"'))
-                kw[arg_splited[0]] = arg_splited[1]
-        except SyntaxError:
+        """Create an object of any class"""
+        if not args:
+            raise SyntaxError()
+
+        args_list = split(args)
+
+        if len(args_list) == 0:
             print("** class name missing **")
-        except NameError:
+            return
+
+        class_name = args_list[0]
+
+        if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
-        new_instance = HBNBCommand.classes[arg_list[0]](**kw)
-        new_instance.save()
+            return
+
+        new_instance = HBNBCommand.classes[class_name]()
+
+        for arg in args_list[1:]:
+            if "=" in arg:
+                key, value = arg.split("=", 1)
+                if value.startswith('"') and value.endswith('"'):
+                    value = (
+                        value[1:-1]
+                        .replace("_", " ")
+                        .replace('\\"', '"'))
+                elif value.startswith("'") and value.endswith("'"):
+                    value = (
+                        value[1:-1]
+                        .replace("_", " ")
+                        .replace('\\"', '"'))
+                elif '.' in value:
+                    try:
+                        value = float(value)
+                    except ValueError:
+                        pass
+                else:
+                    try:
+                        value = int(value)
+                    except ValueError:
+                        pass
+
+                setattr(new_instance, key, value)
+
+        storage.new(new_instance)
+        storage.save()
         print(new_instance.id)
-
-        # """Create an object of any class"""
-        # if not args:
-        #     print("** class name missing **")
-        #     return
-
-        # args_list = split(args)
-        # class_name = args_list[0]
-
-        # if class_name not in HBNBCommand.classes:
-        #     print("** class doesn't exist **")
-        #     return
-
-        # new_instance = HBNBCommand.classes[class_name]()
-
-        # for arg in args_list[1:]:
-        #     if "=" in arg:
-        #         key, value = arg.split("=", 1)
-        #         if value.startswith('"') and value.endswith('"'):
-        #             value = value[1:-1].replace('\\"', '"')
-        #         elif '.' in value:
-        #             try:
-        #                 value = float(value)
-        #             except ValueError:
-        #                 pass
-        #         else:
-        #             try:
-        #                 value = int(value)
-        #             except ValueError:
-        #                 pass
-
-        #         setattr(new_instance, key, value)
-
-        # storage.new(new_instance)
-        # storage.save()
-
-        # print(new_instance.id)
 
     def help_create(self):
         """ Help information for the create method """
