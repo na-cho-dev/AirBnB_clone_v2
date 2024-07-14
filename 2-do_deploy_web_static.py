@@ -1,9 +1,10 @@
 #!/usr/bin/python3
-# Fabfile to distribute an archive to a web server.
+"""
+Fabric script based on the file 1-pack_web_static.py that distributes an
+archive to the web servers
+"""
 from os.path import exists
 from fabric.api import env, put, run, sudo
-
-
 env.hosts = ["100.25.165.114", "18.235.255.168"]
 
 
