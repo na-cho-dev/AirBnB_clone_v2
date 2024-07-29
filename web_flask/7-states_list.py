@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-"""
-A  script that starts a Flask web application
+"""Starts a Flask web application.
 
 The application listens on 0.0.0.0, port 5000.
 Routes:
@@ -9,7 +8,6 @@ Routes:
 from models import storage
 from flask import Flask
 from flask import render_template
-
 
 app = Flask(__name__)
 
